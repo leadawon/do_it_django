@@ -40,5 +40,14 @@ def question_create(request):
     pybo 질문 등록
     """
 
-    form = QuestionForm()
-    return render(request, 'pybo/question_form.html',{"form":form})
+    if request.method == "POST":
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.create_date = timezone.now()
+            question.save()
+            return redirect('pybo:index')
+    else:
+        form = QuestionForm()
+    context = {'form' : form}
+    return render(request, 'pybo/question_form.html',context)
